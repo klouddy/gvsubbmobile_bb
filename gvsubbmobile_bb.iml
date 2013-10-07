@@ -12,6 +12,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="servlet-api-2.5" level="project" />
+    <orderEntry type="library" exported="" name="jsp-api-2.1" level="project" />
+    <orderEntry type="library" exported="" name="bb-taglibs-9.1.110082.0" level="project" />
+    <orderEntry type="library" exported="" name="bb-platform-9.1.110082.0" level="project" />
   </component>
 </module>
 

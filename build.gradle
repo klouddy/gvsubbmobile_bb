@@ -12,8 +12,8 @@ group "edu.monument"
 version "1.0-SNAPSHOT"
 
 ext {
-  learnVersion = "9.1.120113.0"
-  deployServer = "localhost:8000"
+  learnVersion = "9.1.110082.0"
+  deployServer = "bb-dev.server.gvsu.edu"
   deployInstance = "BBLEARN"
 }
 
@@ -35,17 +35,21 @@ dependencies {
 
   // Dependencies are libraries needed to build, but should not be included in the B2 WAR.
   // You should NEVER include Learn JARs (other than webapis) in your B2.
-  // providedCompile( "blackboard.platform:bb-platform:$ext.learnVersion" ) { transitive = false }
-  // providedCompile( "blackboard.platform:bb-taglibs:$ext.learnVersion" ) { transitive = false }
+  providedCompile( "blackboard.platform:bb-platform:$ext.learnVersion" ) { transitive = false }
+  providedCompile( "blackboard.platform:bb-taglibs:$ext.learnVersion" ) { transitive = false }
 
   // Building a Spring B2?  Use our Spring APIs!
   // compile "blackboard.platform:bb-spring-webapi:10.1"
+  compile "com.googlecode.json-simple:json-simple:1.1"
+  
 
   // Include the Blackboard security APIs for protecting your B2.
   // providedCompile "blackboard.plugin:security:1.0:api"
 
   // Dependencies that are only necessary at runtime so should be included in the WAR
   // runtime "org.javassist:javassist:3.17.1-GA"
+  runtime "com.googlecode.json-simple:json-simple:1.1"
+  
 
   buildUtils "org.oscelot:b2deploy-task:0.1.0"
 }
