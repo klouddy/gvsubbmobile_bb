@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="/Users/romeroj/.gradle/caches/artifacts-23/filestore/javax.servlet/servlet-api/2.5/jar/5959582d97d8b61f4d154ca9e495aafd16726e34/servlet-api-2.5.jar" sourcepath="/Users/romeroj/.gradle/caches/artifacts-23/filestore/javax.servlet/servlet-api/2.5/source/21599814ad9a605b86f3e6381571beccd861a32/servlet-api-2.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/romeroj/.gradle/caches/artifacts-23/filestore/javax.servlet.jsp/jsp-api/2.1/jar/63f943103f250ef1f3a4d5e94d145a0f961f5316/jsp-api-2.1.jar" sourcepath="/Users/romeroj/.gradle/caches/artifacts-23/filestore/javax.servlet.jsp/jsp-api/2.1/source/1c9e754118cf8d3d85b6b1257fb6fb0f914d08c6/jsp-api-2.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/romeroj/.gradle/caches/artifacts-23/filestore/blackboard.platform/bb-platform/9.1.110082.0/jar/cea6b0218f2f7870fe05793a7e87df82b654ac27/bb-platform-9.1.110082.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/romeroj/.gradle/caches/artifacts-23/filestore/blackboard.platform/bb-taglibs/9.1.110082.0/jar/c8e1541fdd93c0ca3e963ff7f4872a60659e88c4/bb-taglibs-9.1.110082.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/romeroj/Development/libraries/json_simple.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
