@@ -5,6 +5,8 @@
 
 package edu.gvsu.bbmobile;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
@@ -12,7 +14,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 
+import edu.gvsu.bbmobile.compare.CompareAnnRecent;
 import edu.gvsu.bbmobile.compare.CompareGrades;
+import edu.gvsu.bbmobile.compare.CompareGradesRecent;
 import blackboard.data.gradebook.Lineitem;
 import blackboard.persist.DataType;
 import blackboard.persist.Id;
@@ -155,6 +159,158 @@ public class Grades {
 	    return theReturn;
     }
     
+    private Calendar getRecent(Score scr){
+    	
+    	if(scr.getGrade() != null && !scr.getGrade().equals("")){
+	    	if(scr.getDateChanged() != null){
+	    		return scr.getDateChanged();
+	    	}
+	    	if(scr.getDateAdded() != null){
+	    		return scr.getDateAdded();
+	    	}
+    	}
+    	else{
+    		return null;
+    	}
+    	return null;
+    }
+    
+    public List<Map> LoadRecentGradesByUsername(String strUsername, Integer limit){
+    	
+    	List<Map> theRet = new ArrayList<Map>();
+    	
+    	try { liLoader = LineitemDbLoader.Default.getInstance();
+	    	cmLoader = CourseMembershipDbLoader.Default.getInstance();
+	    	uLoader = UserDbLoader.Default.getInstance();
+	    	scoreLoader = ScoreDbLoader.Default.getInstance();
+	    	cLoader = CourseDbLoader.Default.getInstance();
+	    	
+	    	ArrayList<Score> scores = new ArrayList(); // master score list for all scores for user
+		    
+	    	// get list of course Memberships for user passed
+	    	User currUser = uLoader.loadByUserName(strUsername);
+		    List cms = cmLoader.loadByUserId(currUser.getId());
+		    
+		    SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy hh:mm a");
+		    
+		    //loop through list of course memberships
+		    // for each mem load all scores 
+		    // add score info to return
+		    for (Iterator cmItr = cms.iterator(); cmItr.hasNext();){
+		    	CourseMembership currCm = (CourseMembership) cmItr.next();
+		    	
+		    	List<Score> currScores = scoreLoader.loadByCourseMembershipId(currCm.getId());
+		    	for(Score s : currScores){
+		    		Calendar recent = getRecent(s);
+		    		if(recent != null){
+		    			Lineitem currLi = liLoader.loadById(s.getLineitemId());
+		    			Course currCrs = cLoader.loadById(currLi.getCourseId());
+		    			
+		    			Map curr = new HashMap();
+		    			curr.put("score_id", s.getId().toExternalString());
+		    	    	curr.put("label", currLi.getName());
+		    	    	curr.put("grade", s.getGrade());
+		    	    	curr.put("crs_id", currCrs.getId().toExternalString());
+		    	    	curr.put("crs_name", currCrs.getTitle());
+		    	    	curr.put("points_poss", String.valueOf(currLi.getPointsPossible()));
+		    	    	curr.put("pos", String.valueOf(currLi.getColumnOrder()));
+		    	    	curr.put("type", BbObjectType.GRADE);
+		    	    	curr.put("id", s.getId().toExternalString());
+		    	    	curr.put("col_type", currLi.getType());
+		    	    	curr.put("post_date", sdf.format(recent.getTime()));
+		    	    	curr.put("post_cal", recent);
+		    	    	theRet.add(curr);
+		    		}
+		    	}
+			}
+	    } catch (Exception ex){ ex.printStackTrace(); }
+    	
+    	if(limit != null){
+    		if(limit > theRet.size()){
+    			limit = theRet.size();
+    		}
+			Collections.sort(theRet, new CompareGradesRecent());
+			List<Map> tmpList = new ArrayList<Map>();
+			for(int i = 0; i < limit; i++){
+				theRet.get(i).remove("post_cal");
+				tmpList.add(theRet.get(i));
+			}
+			theRet = tmpList;
+		}
+    	
+    	return theRet;
+    }
+    
+    public List<Map> LoadRecentGradesByUsername(String strUsername, Integer limit, String crsId){
+    	
+    	List<Map> theRet = new ArrayList<Map>();
+    	
+    	try { liLoader = LineitemDbLoader.Default.getInstance();
+	    	cmLoader = CourseMembershipDbLoader.Default.getInstance();
+	    	uLoader = UserDbLoader.Default.getInstance();
+	    	scoreLoader = ScoreDbLoader.Default.getInstance();
+	    	cLoader = CourseDbLoader.Default.getInstance();
+	    	
+	    	ArrayList<Score> scores = new ArrayList(); // master score list for all scores for user
+		    
+	    	// get list of course Memberships for user passed
+	    	User currUser = uLoader.loadByUserName(strUsername);
+		    List cms = cmLoader.loadByUserId(currUser.getId());
+		    
+		    SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy hh:mm a");
+		    
+		    //loop through list of course memberships
+		    // for each mem load all scores 
+		    // add score info to return
+		    for (Iterator cmItr = cms.iterator(); cmItr.hasNext();){
+		    	CourseMembership currCm = (CourseMembership) cmItr.next();
+		    	
+		    	List<Score> currScores = scoreLoader.loadByCourseMembershipId(currCm.getId());
+		    	for(Score s : currScores){
+		    		Calendar recent = getRecent(s);
+		    		if(recent != null){
+		    			Lineitem currLi = liLoader.loadById(s.getLineitemId());
+		    			Course currCrs = cLoader.loadById(currLi.getCourseId());
+		    			
+		    			Map curr = new HashMap();
+		    			curr.put("score_id", s.getId().toExternalString());
+		    	    	curr.put("label", currLi.getName());
+		    	    	curr.put("grade", s.getGrade());
+		    	    	curr.put("crs_id", currCrs.getId().toExternalString());
+		    	    	curr.put("crs_name", currCrs.getTitle());
+		    	    	curr.put("points_poss", String.valueOf(currLi.getPointsPossible()));
+		    	    	curr.put("pos", String.valueOf(currLi.getColumnOrder()));
+		    	    	curr.put("type", BbObjectType.GRADE);
+		    	    	curr.put("id", s.getId().toExternalString());
+		    	    	curr.put("col_type", currLi.getType());
+		    	    	curr.put("post_date", sdf.format(recent.getTime()));
+		    	    	curr.put("post_cal", recent);
+		    	    	if(currCrs.getId().toExternalString().equals(crsId)){
+		    	    		theRet.add(curr);
+		    	    	}
+		    		}
+		    	}
+			}
+	    } catch (Exception ex){ ex.printStackTrace(); }
+    	
+    	if(limit != null){
+    		if(limit > theRet.size()){
+    			limit = theRet.size();
+    		}
+			Collections.sort(theRet, new CompareGradesRecent());
+			List<Map> tmpList = new ArrayList<Map>();
+			for(int i = 0; i < limit; i++){
+				theRet.get(i).remove("post_cal");
+				tmpList.add(theRet.get(i));
+			}
+			theRet = tmpList;
+		}
+    	
+    	return theRet;
+    }
+    
+    
+    
     /**
      * Get data for each score that a student has a grade for in the grade center
      * @param strUserName
@@ -175,6 +331,8 @@ public class Grades {
 	    	User currUser = uLoader.loadByUserName(strUserName);
 		    List cms = cmLoader.loadByUserId(currUser.getId());
 		    
+		    log.logError("BbMobile in Grades: courseMembership: " + cms.size());
+		    
 		    //loop through list of course memberships
 		    // for each mem load all scores 
 		    // add score info to return
@@ -182,6 +340,7 @@ public class Grades {
 		    	CourseMembership currCm = (CourseMembership) cmItr.next();
 		    	
 		    	List currScores = scoreLoader.loadByCourseMembershipId(currCm.getId());
+		    	log.logError("Bbmobile in Grades: scores size for coruse: " + currCm.getCourseId().toExternalString() + " : " + currScores.size());
 		    	scores.addAll(currScores);
 		    }
 	    }catch (Exception ex){
