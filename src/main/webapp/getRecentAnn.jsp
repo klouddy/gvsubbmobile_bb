@@ -33,7 +33,6 @@ if(sm.isAuthenticated()){
 	
 	JSONArray jaAnns = new JSONArray(mAnn);
 	
-	
 	out.print(jaAnns.toString());
 }
 else{

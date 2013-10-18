@@ -94,9 +94,9 @@ public class Contents {
 				
 			
 				PreparedStatement query = null;
+				
 				try {
 					conn = db.getConnectionManager().getConnection();
-					log.logError(TAG + " QUERY: " + sql);
 					query = conn.prepareStatement(sql);
 					query.execute();
 					ResultSet rs = query.getResultSet();
@@ -106,7 +106,7 @@ public class Contents {
 						cMap.put("cnt_id", "_" + String.valueOf(rs.getInt("cnt_pk1") + "_1"));
 						cMap.put("cnt_label", rs.getString("cnt_title"));
 						cMap.put("cnt_pos", rs.getString("position"));
-						cMap.put("cnt_type", BbObjectType.GRADEABLE);
+						cMap.put("type", BbObjectType.GRADEABLE);
 						cMap.put("cnt_handle", rs.getString("cnt_handle"));
 						cMap.put("cnt_start", rs.getString("cnt_start"));
 						cMap.put("cnt_end", rs.getString("cnt_end"));
@@ -120,7 +120,6 @@ public class Contents {
 							cMap.put("cnt_comp_due", getCompDueDate(cMap));
 						}
 
-						log.logError(TAG + "map: " + cMap.toString());
 						lstRet.add(cMap);
 					}
 					
@@ -142,6 +141,7 @@ public class Contents {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
 				
 				return lstRet;
 		}
@@ -232,16 +232,16 @@ public class Contents {
 				sql += "FROM bblearn.course_main cm, bblearn.course_contents crscnts ";
 				sql += "WHERE cm.pk1 in " + sqlCrsIn + " ";
 				sql += "and crscnts.available_ind like 'Y' "
+						+ "and crscnts.crsmain_pk1 = cm.pk1 "
 						+ "and ((crscnts.start_date <= current_date and current_date <= crscnts.end_date) "
 						+ "or (crscnts.start_date is null and crscnts.end_date >= current_date  ) "
 						+ "or (crscnts.end_date is null and crscnts.start_date <= current_date) "
 						+ "or (crscnts.end_date is null and crscnts.start_date is null))";
 				
-			
 				PreparedStatement query = null;
+				
 				try {
 					conn = db.getConnectionManager().getConnection();
-					log.logError(TAG + " QUERY: " + sql);
 					query = conn.prepareStatement(sql);
 					query.execute();
 					ResultSet rs = query.getResultSet();
@@ -252,6 +252,7 @@ public class Contents {
 						cMap.put("cnt_label", rs.getString("cnt_title"));
 						cMap.put("cnt_pos", rs.getString("position"));
 						cMap.put("cnt_type", BbObjectType.CONTENT_ITEM);
+						cMap.put("type", BbObjectType.CONTENT_ITEM);
 						cMap.put("cnt_handle", rs.getString("cnt_handle"));
 						cMap.put("cnt_start", rs.getString("cnt_start"));
 						cMap.put("cnt_end", rs.getString("cnt_end"));
@@ -261,7 +262,6 @@ public class Contents {
 						cMap.put("cnt_date_mod", rs.getString("cnt_date_mod"));
 						cMap.put("cnt_recent_date", getRecentDate(cMap));
 						
-						log.logError(TAG + "map: " + cMap.toString());
 						lstRet.add(cMap);
 					}
 					

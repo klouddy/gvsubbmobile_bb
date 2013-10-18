@@ -12,6 +12,8 @@ public class BbObjectType {
 	public static int GRADEABLE = 104;
 	public static int TABLE_OF_CONTENTS = 105;
 	
+	public static int LIST_COUNT = 1000;
+	
 	
 	
 }

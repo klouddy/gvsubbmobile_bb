@@ -74,9 +74,9 @@ public class Announcements {
 				if ( ann.getId().toExternalString().equals(strId)){
 					Map mAnn = new HashMap();
 					mAnn.put("id", ann.getId().toExternalString());
-					mAnn.put("label", org.json.simple.JSONObject.escape(ann.getTitle()));
-					mAnn.put("desc", org.json.simple.JSONObject.escape(ann.getBody().getFormattedText()));
-					mAnn.put("type", "301");
+					mAnn.put("label", ann.getTitle());
+					mAnn.put("desc", ann.getBody().getFormattedText());
+					mAnn.put("type", BbObjectType.ANNOUNCEMENT);
 					mAnn.put("pos", String.valueOf(ann.getPosition()));
 					mAnn.put("crs_id", ann.getCourseId().toExternalString());
 					Course crs = new Course();
@@ -115,6 +115,7 @@ public class Announcements {
 			SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy hh:mm a");
 			
 			List<Announcement> anns = annLoader.loadAvailableByUserId(usr.getId());
+			Integer totalCount = anns.size();
 			Integer c = 1;
 			for(Announcement a : anns){
 				if(c > max){ break; }
@@ -142,15 +143,23 @@ public class Announcements {
 	            c++;
 			}
 			
-			
+			Map countMap = new HashMap();
+			countMap.put("total", totalCount);
+			countMap.put("type", BbObjectType.LIST_COUNT);
+			theRet.add(countMap);
 			
 		}catch(Exception e){
 			//TODO: log error
 			e.printStackTrace();
 		}
 		
+		Collections.sort(theRet, new CompareAnnRecent());
+		
 		if(max != null){
-			Collections.sort(theRet, new CompareAnnRecent());
+			if(max > theRet.size()){
+				max = theRet.size();
+			}
+			
 			List<Map> tmpList = new ArrayList<Map>();
 			for(int i = 0; i < max; i++){
 				theRet.get(i).remove("post_cal");
@@ -177,9 +186,12 @@ public class Announcements {
 			cLoader = CourseDbLoader.Default.getInstance();
 			User usr = uLoader.loadByUserName(strUsername);
 			
+			int totalCount = 0;
+			
 			SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy hh:mm a");
 			
 			List<Announcement> anns = annLoader.loadAvailableByUserId(usr.getId());
+			totalCount = anns.size();
 			Integer c = 1;
 			for(Announcement a : anns){
 				Calendar recent = getRecentDate(a);
@@ -209,6 +221,10 @@ public class Announcements {
 	            
 			}
 			
+			Map countMap = new HashMap();
+			countMap.put("total", totalCount);
+			countMap.put("type", BbObjectType.LIST_COUNT);
+			theRet.add(countMap);
 			
 			
 		}catch(Exception e){
@@ -216,8 +232,13 @@ public class Announcements {
 			e.printStackTrace();
 		}
 		
+		Collections.sort(theRet, new CompareAnnRecent());
+		
 		if(max != null){
-			Collections.sort(theRet, new CompareAnnRecent());
+			if(max > theRet.size()){
+				max = theRet.size();
+			}
+			
 			List<Map> tmpList = new ArrayList<Map>();
 			for(int i = 0; i < max; i++){
 				theRet.get(i).remove("post_cal");

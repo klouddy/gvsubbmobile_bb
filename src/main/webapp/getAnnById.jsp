@@ -14,7 +14,7 @@ SessionManager sm = new SessionManager(request);
 blackboard.platform.log.LogService logService = blackboard.platform.log.LogServiceFactory.getInstance();
 blackboard.platform.log.Log log = logService.getDefaultLog();
 
-
+String strRet = "<?xml version='1.0' encoding='ISO-8859-1'?><announcement>";
 if(sm.isAuthenticated()){
 	Announcements ann = new Announcements();
 	
@@ -22,16 +22,18 @@ if(sm.isAuthenticated()){
 	if(annId != null && !(annId.equals(""))){
 	
 		Map mAnn = ann.LoadAnnById(annId, sm.getUserName());
-		List<Map> lstAnn = new ArrayList<Map>();
-		lstAnn.add(mAnn);
-		
-		JSONArray ja = new JSONArray(lstAnn);
-		
-		
-		out.print(ja.toString());
+		strRet += "<id>" + mAnn.get("id") + "</id>";
+		strRet += "<label>" + mAnn.get("label") + "</label>";
+		strRet += "<type>" + mAnn.get("type") + "</type>";
+		strRet += "<pos>" + mAnn.get("pos") + "</pos>";
+		strRet += "<crs_id>" + mAnn.get("crs_id") + "</crs_id>";
+		strRet += "<crs_name>" + mAnn.get("crs_name") + "</crs_name>";
+		strRet += "<desc>" + "<![CDATA[" + mAnn.get("desc") + "]]>" + "</desc>";
+		strRet += "</announcement>";
+		out.print(strRet );
 	}
 	else{
-		out.print("{}");
+		out.print("");
 	}
 }
 else{
